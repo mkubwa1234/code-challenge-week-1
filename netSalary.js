@@ -1,11 +1,6 @@
-const readline = require('readline');
+const prompt = require("prompt-sync")({ sigint: true });
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
-function calculateGrossSalary(basicSalary, allowances, nhifDeduction, nssfDeduction) {
+function calculateGrossSalary(basicSalary, allowances = 200, nhifDeduction = 2300, nssfDeduction = 2100) {
     // Calculate total deductions
     const totalDeductions = nhifDeduction + nssfDeduction;
 
@@ -25,45 +20,24 @@ function calculatePAYE(grossSalary) {
     let totalTax = 0;
 
     for (const bracket of taxBrackets) {
-        if (grossSalary > bracket.min) {
-            const taxableIncome = Math.min(grossSalary, bracket.max) - bracket.min;
-            const bracketTax = taxableIncome * bracket.rate;
-            totalTax += bracketTax;
-            if (grossSalary <= bracket.max) {
-                break;
-            }
+        if (grossSalary <= bracket.min) {
+            break;
         }
+
+        const taxableIncome = Math.min(grossSalary, bracket.max) - bracket.min;
+        totalTax += taxableIncome * bracket.rate;
     }
 
     return totalTax;
 }
 
 function runProgram() {
-    rl.question("Enter your basic salary: ", (basicSalary) => {
-        rl.question("Enter your allowances: ", (allowances) => {
-            rl.question("Enter NHIF deduction: ", (nhifDeduction) => {
-                rl.question("Enter NSSF deduction: ", (nssfDeduction) => {
-                    // Convert input strings to numbers
-                    basicSalary = parseFloat(basicSalary);
-                    allowances = parseFloat(allowances);
-                    nhifDeduction = parseFloat(nhifDeduction);
-                    nssfDeduction = parseFloat(nssfDeduction);
+    const basicSalary = parseFloat(prompt("Enter your basic salary: "));
+    const grossSalary = calculateGrossSalary(basicSalary);
+    const paye = calculatePAYE(grossSalary);
 
-                    // Calculate gross salary
-                    const grossSalary = calculateGrossSalary(basicSalary, allowances, nhifDeduction, nssfDeduction);
-
-                    // Calculate PAYE tax
-                    const paye = calculatePAYE(grossSalary);
-
-                    // Display results
-                    console.log("Gross Salary: $" + grossSalary);
-                    console.log("PAYE: $" + paye);
-
-                    rl.close();
-                });
-            });
-        });
-    });
+    console.log("Gross Salary: $" + grossSalary);
+    console.log("PAYE: $" + paye);
 }
 
 runProgram();
