@@ -1,3 +1,10 @@
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
 function calculateGrossSalary(basicSalary, allowances, nhifDeduction, nssfDeduction) {
     // Calculate total deductions
     const totalDeductions = nhifDeduction + nssfDeduction;
@@ -17,4 +24,46 @@ function calculatePAYE(grossSalary) {
 
     let totalTax = 0;
 
+    for (const bracket of taxBrackets) {
+        if (grossSalary > bracket.min) {
+            const taxableIncome = Math.min(grossSalary, bracket.max) - bracket.min;
+            const bracketTax = taxableIncome * bracket.rate;
+            totalTax += bracketTax;
+            if (grossSalary <= bracket.max) {
+                break;
+            }
+        }
+    }
+
+    return totalTax;
 }
+
+function runProgram() {
+    rl.question("Enter your basic salary: ", (basicSalary) => {
+        rl.question("Enter your allowances: ", (allowances) => {
+            rl.question("Enter NHIF deduction: ", (nhifDeduction) => {
+                rl.question("Enter NSSF deduction: ", (nssfDeduction) => {
+                    // Convert input strings to numbers
+                    basicSalary = parseFloat(basicSalary);
+                    allowances = parseFloat(allowances);
+                    nhifDeduction = parseFloat(nhifDeduction);
+                    nssfDeduction = parseFloat(nssfDeduction);
+
+                    // Calculate gross salary
+                    const grossSalary = calculateGrossSalary(basicSalary, allowances, nhifDeduction, nssfDeduction);
+
+                    // Calculate PAYE tax
+                    const paye = calculatePAYE(grossSalary);
+
+                    // Display results
+                    console.log("Gross Salary: $" + grossSalary);
+                    console.log("PAYE: $" + paye);
+
+                    rl.close();
+                });
+            });
+        });
+    });
+}
+
+runProgram();

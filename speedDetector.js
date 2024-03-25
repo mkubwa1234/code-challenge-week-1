@@ -2,7 +2,7 @@
 
 const prompt = require("prompt-sync")({ sigint: true });
 
-const speed = ("Enter your speed: ")
+const speed = parseFloat(prompt("Speed of the car (in km/h): "));
 // Initialize points
 let points = 0; 
 
