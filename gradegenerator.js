@@ -4,7 +4,8 @@ const prompt = require("prompt-sync")({ sigint: true });
 
 const grade = prompt("Enter your grade: ")
 
-if(grade >= 79) {
+
+if(grade >= 79 && grade <= 100) {
     console.log('VeryGood, You got an [A].');
 } else if(grade >= 60 && grade < 79) {
     console.log('Good, You got a [B]. ');
@@ -14,4 +15,6 @@ if(grade >= 79) {
     console.log('Hi, You got a [D]. ');
 } else if(grade < 40){
     console.log('Hi, You got an [E]. ')
+} else{
+    console.log('Invalid Mark')
 }
